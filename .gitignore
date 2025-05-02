@@ -20,6 +20,8 @@ build/
 .vscode/
 *.swp
 *.swo
+record/
+*.mdc
 
 # Operating Systems
 .DS_Store

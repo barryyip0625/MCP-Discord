@@ -1,20 +1,25 @@
 # MCP-Discord
-[![smithery badge](https://smithery.ai/badge/@barryyip0625/mcp-discord)](https://smithery.ai/server/@barryyip0625/mcp-discord)
+[![smithery badge](https://smithery.ai/badge/@barryyip0625/mcp-discord)](https://smithery.ai/server/@barryyip0625/mcp-discord) ![](https://badge.mcpx.dev?type=server 'MCP Server')
 
 A Discord MCP (Model Context Protocol) server that enables AI assistants to interact with the Discord platform.
+
+<a href="https://glama.ai/mcp/servers/@barryyip0625/mcp-discord">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@barryyip0625/mcp-discord/badge" alt="MCP-Discord MCP server" />
+</a>
 
 ## Overview
 
 MCP-Discord provides the following Discord-related functionalities:
 
 - Login to Discord bot
-- Send messages to specified channels
 - Get server information
+- Read/delete channel messages
+- Send messages to specified channels
 - Retrieve forum channel lists
 - Create/delete/reply to forum posts
-- Read channel messages
 - Create/delete text channels
 - Add/remove message reactions
+- Create/edit/delete/use webhooks
 
 ## Table of Contents
 
@@ -26,6 +31,7 @@ MCP-Discord provides the following Discord-related functionalities:
   - [Channel Management](#channel-management)
   - [Forum Functions](#forum-functions)
   - [Messages and Reactions](#messages-and-reactions)
+  - [Webhook Management](#webhook-management)
 - [Development](#development)
 - [License](#license)
 
@@ -149,6 +155,14 @@ node path/to/mcp-discord/build/index.js --config "{\"DISCORD_TOKEN\":\"your_disc
 - `discord_add_reaction`: Add a reaction to a message
 - `discord_add_multiple_reactions`: Add multiple reactions to a message
 - `discord_remove_reaction`: Remove a reaction from a message
+- `discord_delete_message`: Delete a specific message from a channel
+
+### Webhook Management
+
+- `discord_create_webhook`: Creates a new webhook for a Discord channel
+- `discord_send_webhook_message`: Sends a message to a Discord channel using a webhook
+- `discord_edit_webhook`: Edits an existing webhook for a Discord channel
+- `discord_delete_webhook`: Deletes an existing webhook for a Discord channel
 
 ## Development
 
@@ -159,4 +173,4 @@ npm run dev
 
 ## License
 
-MIT License 
+[MIT License](https://github.com/barryyip0625/mcp-discord?tab=MIT-1-ov-file)
