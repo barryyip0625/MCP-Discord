@@ -105,10 +105,34 @@ export class StreamableHttpTransport implements MCPTransport {
             });
         });
 
-        // Handler for non-POST methods
+        // Handler for GET requests (for health checks and server info)
+        this.app.get('/mcp', (req: Request, res: Response) => {
+            info('Received GET request to /mcp');
+            // Parse query parameters as configuration
+            const queryParams = req.query;
+            
+            // For GET requests, return server information
+            res.json(createSuccessResponse({
+                protocolVersion: "2025-03-26",
+                serverInfo: {
+                    name: "MCP-Discord",
+                    version: "1.2.0"
+                },
+                status: "ready",
+                config: queryParams
+            }));
+        });
+
+        // Handler for DELETE requests (for cleanup if needed)
+        this.app.delete('/mcp', (req: Request, res: Response) => {
+            info('Received DELETE request to /mcp');
+            res.json(createSuccessResponse({ message: "Server reset acknowledged" }));
+        });
+
+        // Handler for other methods
         this.app.all('/mcp', (req: Request, res: Response) => {
-            if (req.method !== 'POST') {
-                res.status(405).json(createErrorResponse('Method not allowed. Use POST.', -32000, null));
+            if (!['POST', 'GET', 'DELETE'].includes(req.method)) {
+                res.status(405).json(createErrorResponse(`Method ${req.method} not allowed. Use POST, GET, or DELETE.`, -32000, null));
             }
         });
     }

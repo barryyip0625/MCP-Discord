@@ -1,16 +1,15 @@
+runtime: "container"
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
 startCommand:
-  type: http
+  type: "http"
   configSchema:
-    type: object
-    required: ["discordToken"]
+    type: "object"
     properties:
       discordToken:
-        type: string
-        title: "Discord Bot Token"
+        type: "string"
         description: "Discord bot token. Obtain this from the Discord Developer Portal."
-  commandFunction: |
-    config => ({
-      command: 'node', 
-      args: ['./build/index.js', '--transport', 'shttp', '--port', '8080'], 
-      env: {DISCORD_TOKEN: config.discordToken}
-    })
+    required: ["discordToken"]
+  exampleConfig:
+    discordToken: "your-discord-bot-token-here"
