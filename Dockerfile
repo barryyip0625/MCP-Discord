@@ -22,6 +22,6 @@ ENV DISCORD_TOKEN=""
 # Expose port (will be set by Smithery via PORT env var)
 EXPOSE 8080
 
-# Default command to run the MCP server with shttp transport
-# Use PORT environment variable if provided, otherwise default to 8080
-CMD ["sh", "-c", "node build/index.cjs --transport shttp --port ${PORT:-8080}"]
+# Default command to run the MCP server
+# Smithery will handle the transport and port configuration automatically
+CMD ["node", "build/index.cjs"]
