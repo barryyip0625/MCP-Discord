@@ -8,3 +8,9 @@ startCommand:
       discordToken:
         type: string
         description: "The bot token for Discord integration."
+  commandFunction: |
+    config => ({
+      command: 'node', 
+      args: ['./build/index.js', '--transport', 'http', '--port', '8080'], 
+      env: {DISCORD_TOKEN: config.discordToken}
+    })
