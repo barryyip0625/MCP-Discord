@@ -13,11 +13,14 @@ RUN npm install --ignore-scripts
 # Copy source code
 COPY . .
 
-# Build the TypeScript code
-RUN npm run build
+# Build the TypeScript code using Smithery CLI
+RUN npx @smithery/cli build src/index.ts --out build/index.js --transport shttp
+
+# Set environment variable for Discord token
+ENV DISCORD_TOKEN=""
 
 # Expose HTTP port
 EXPOSE 8080
 
-# Default command to run the MCP server with HTTP transport and Discord token
-CMD ["node", "build/index.js", "--transport", "http", "--port", "8080"]
+# Default command to run the MCP server with shttp transport and Discord token
+CMD ["node", "build/index.js", "--transport", "shttp", "--port", "8080"]

@@ -90,6 +90,7 @@ const autoLogin = async () => {
 const initializeTransport = () => {
     switch (config.TRANSPORT.toLowerCase()) {
         case 'http':
+        case 'shttp':
             info(`Initializing HTTP transport on 0.0.0.0:${config.HTTP_PORT}`);
             return new StreamableHttpTransport(config.HTTP_PORT);
         case 'stdio':
@@ -101,40 +102,49 @@ const initializeTransport = () => {
     }
 };
 
-// Start auto-login process
-await autoLogin();
+// Main async function to handle top-level await
+async function main() {
+    // Start auto-login process
+    await autoLogin();
 
-// Create and start MCP server with selected transport
-const transport = initializeTransport();
-const mcpServer = new DiscordMCPServer(client, transport);
+    // Create and start MCP server with selected transport
+    const transport = initializeTransport();
+    const mcpServer = new DiscordMCPServer(client, transport);
 
-try {
-    await mcpServer.start();
-    info('MCP server started successfully');
-    
-    // Keep the Node.js process running
-    if (config.TRANSPORT.toLowerCase() === 'http') {
-        // Send a heartbeat every 30 seconds to keep the process alive
-        setInterval(() => {
-            info('MCP server is running');
-        }, 30000);
+    try {
+        await mcpServer.start();
+        info('MCP server started successfully');
         
-        // Handle termination signals
-        process.on('SIGINT', async () => {
-            info('Received SIGINT. Shutting down server...');
-            await mcpServer.stop();
-            process.exit(0);
-        });
-        
-        process.on('SIGTERM', async () => {
-            info('Received SIGTERM. Shutting down server...');
-            await mcpServer.stop();
-            process.exit(0);
-        });
-        
-        info('Server running in keep-alive mode. Press Ctrl+C to stop.');
+        // Keep the Node.js process running
+        if (config.TRANSPORT.toLowerCase() === 'http' || config.TRANSPORT.toLowerCase() === 'shttp') {
+            // Send a heartbeat every 30 seconds to keep the process alive
+            setInterval(() => {
+                info('MCP server is running');
+            }, 30000);
+            
+            // Handle termination signals
+            process.on('SIGINT', async () => {
+                info('Received SIGINT. Shutting down server...');
+                await mcpServer.stop();
+                process.exit(0);
+            });
+            
+            process.on('SIGTERM', async () => {
+                info('Received SIGTERM. Shutting down server...');
+                await mcpServer.stop();
+                process.exit(0);
+            });
+            
+            info('Server running in keep-alive mode. Press Ctrl+C to stop.');
+        }
+    } catch (err) {
+        error('Failed to start MCP server: ' + String(err));
+        process.exit(1);
     }
-} catch (err) {
-    error('Failed to start MCP server: ' + String(err));
-    process.exit(1);
 }
+
+// Start the application
+main().catch((err) => {
+    error('Failed to start application: ' + String(err));
+    process.exit(1);
+});
