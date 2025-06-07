@@ -16,9 +16,6 @@ COPY . .
 # Build the TypeScript code
 RUN npm run build
 
-# Set environment variable for Discord token
-ENV DISCORD_TOKEN=""
-
 # Expose HTTP port
 EXPOSE 8080
 
