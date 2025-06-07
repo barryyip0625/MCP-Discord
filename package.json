@@ -1,17 +1,16 @@
 {
   "name": "mcp-discord",
   "version": "1.2.0",
-  "main": "build/index.cjs",
+  "main": "src/index.ts",
   "bin": {
-    "mcp-discord": "build/index.cjs"
+    "mcp-discord": "src/index.ts"
   },
   "type": "module",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "build": "npx @smithery/cli build src/index.ts --out build/index.cjs --transport shttp",
-    "start": "node build/index.cjs",
+    "start": "node --loader ts-node/esm src/index.ts",
     "dev": "node --loader ts-node/esm src/index.ts",
     "test-api": "node test-api.js"
   },
