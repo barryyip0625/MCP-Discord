@@ -7,10 +7,10 @@ startCommand:
     properties:
       discordToken:
         type: string
-        description: "The bot token for Discord integration."
-  commandFunction: |
-    config => ({
-      command: 'node', 
-      args: ['./build/index.js', '--transport', 'http', '--port', '8080'], 
-      env: {DISCORD_TOKEN: config.discordToken}
-    })
+        title: "Discord Bot Token"
+        description: "Discord bot token. Obtain this from the Discord Developer Portal."
+  exampleConfig:
+    discordToken: YOUR_DISCORD_BOT_TOKEN
+
+build:
+  dockerfile: Dockerfile
