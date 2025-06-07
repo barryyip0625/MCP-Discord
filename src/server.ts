@@ -46,7 +46,7 @@ export class DiscordMCPServer {
     this.server = new Server(
       {
         name: "MCP-Discord",
-        version: "1.0.0"
+        version: "1.2.0"
       },
       {
         capabilities: {
@@ -211,25 +211,40 @@ export class DiscordMCPServer {
   }
 
   async start() {
-    // Add client to server context so transport can access it
-    (this.server as any)._context = { client: this.client };
-    (this.server as any).client = this.client;
-    
-    // Setup periodic client state logging
-    this.clientStatusInterval = setInterval(() => {
-      this.logClientState("periodic check");
-    }, 10000);
-    
-    await this.transport.start(this.server);
+    try {
+      // Add client to server context so transport can access it
+      (this.server as any)._context = { client: this.client };
+      (this.server as any).client = this.client;
+      
+      // Setup periodic client state logging
+      this.clientStatusInterval = setInterval(() => {
+        this.logClientState("periodic check");
+      }, 10000);
+      
+      await this.transport.start(this.server);
+    } catch (err) {
+      error(`Failed to start MCP server: ${err instanceof Error ? err.message : String(err)}`);
+      // Clean up on failure
+      if (this.clientStatusInterval) {
+        clearInterval(this.clientStatusInterval);
+        this.clientStatusInterval = null;
+      }
+      throw err;
+    }
   }
 
   async stop() {
-    // Clear the periodic check interval
-    if (this.clientStatusInterval) {
-      clearInterval(this.clientStatusInterval);
-      this.clientStatusInterval = null;
+    try {
+      // Clear the periodic check interval
+      if (this.clientStatusInterval) {
+        clearInterval(this.clientStatusInterval);
+        this.clientStatusInterval = null;
+      }
+      
+      await this.transport.stop();
+    } catch (err) {
+      error(`Error stopping MCP server: ${err instanceof Error ? err.message : String(err)}`);
+      throw err;
     }
-    
-    await this.transport.stop();
   }
 } 

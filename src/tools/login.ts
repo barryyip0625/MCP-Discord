@@ -3,7 +3,6 @@ import { ToolHandler } from './types.js';
 import { handleDiscordError } from "../errorHandler.js";
 import { info, error } from '../logger.js';
 import { Client, GatewayIntentBits } from 'discord.js';
-import { createToolContext } from './tools.js';
 
 // Create a function to properly wait for client to be ready
 async function waitForReady(client: Client, token: string, timeoutMs = 30000): Promise<Client> {
@@ -52,36 +51,37 @@ async function waitForReady(client: Client, token: string, timeoutMs = 30000): P
 export const loginHandler: ToolHandler = async (args, context) => {
   DiscordLoginSchema.parse(args);
   try {
-        // Check if client is already logged in
-        if (context.client.isReady()) {
-          return {
-            content: [{ type: "text", text: `Already logged in as: ${context.client.user?.tag}` }]
-          };
-        }
-        
-        // Use token from args if provided, otherwise fall back to the client's token
-        const token = args.token || context.client.token;
-        
-        // Check if we have a token to use
-        if (!token) {
-          return {
-            content: [{ type: "text", text: "Discord token not provided and not configured. Cannot log in. Please check the following: 1. Provide a token in the login command or make sure the token is correctly set in your config or environment variables. 2. Ensure all required privileged intents (Message Content, Server Members, Presence) are enabled in the Discord Developer Portal for your bot application." }],
-            isError: true
-          };
-        }
-        
-        // If token is provided in args, update the client's token
-        if (args.token) {
-          context.client.token = args.token;
-        }
-        
-        // Attempt to log in with the token and get the ready client
-        const readyClient = await waitForReady(context.client, token);
-        // Update the context client with the ready client
-        context.client = readyClient;
-        return {
-          content: [{ type: "text", text: `Successfully logged in to Discord: ${context.client.user?.tag}` }]
-        };
+    // Check if client is already logged in
+    if (context.client.isReady()) {
+      return {
+        content: [{ type: "text", text: `Already logged in as: ${context.client.user?.tag}` }]
+      };
+    }
+    
+    // Use token from args if provided, otherwise fall back to the client's token
+    const token = args.token || context.client.token;
+    
+    // Check if we have a token to use
+    if (!token) {
+      return {
+        content: [{ type: "text", text: "Discord token not provided and not configured. Cannot log in. Please check the following: 1. Provide a token in the login command or make sure the token is correctly set in your config or environment variables. 2. Ensure all required privileged intents (Message Content, Server Members, Presence) are enabled in the Discord Developer Portal for your bot application." }],
+        isError: true
+      };
+    }
+    
+    // If token is provided in args, update the client's token
+    if (args.token) {
+      context.client.token = args.token;
+    }
+    
+    // Attempt to log in with the token and get the ready client
+    await waitForReady(context.client, token);
+    
+    info(`Successfully logged in as: ${context.client.user?.tag}`);
+    
+    return {
+      content: [{ type: "text", text: `Successfully logged in to Discord: ${context.client.user?.tag}` }]
+    };
   } catch (err) {
     error(`Error in login handler: ${err instanceof Error ? err.message : String(err)}`);
     return handleDiscordError(err);
